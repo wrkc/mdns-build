@@ -6,14 +6,13 @@ jobs:
     steps:
       - name: Build mdns-repeater static musl
         run: |
-          sudo apt-get install -y musl-tools wget
+          sudo apt-get install -y gcc-aarch64-linux-gnu wget
           wget https://raw.githubusercontent.com/geekman/mdns-repeater/master/mdns-repeater.c
-          wget https://musl.cc/aarch64-linux-musl-cross.tgz
-          tar -xzf aarch64-linux-musl-cross.tgz
-          ./aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc -static -DHGVERSION='"1.0"' -o mdns-repeater mdns-repeater.c
+          aarch64-linux-gnu-gcc -static -DHGVERSION='"1.0"' -o mdns-repeater mdns-repeater.c -Wl,--allow-multiple-definition
           file mdns-repeater
+          strings mdns-repeater | grep -i 'dynamic\|interp\|glibc' || echo "no dynamic deps found"
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: mdns-repeater-aarch64-musl
+          name: mdns-repeater-aarch64-static
           path: mdns-repeater
