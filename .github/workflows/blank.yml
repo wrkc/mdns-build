@@ -4,15 +4,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build mdns-repeater static musl
+      - name: Build mdns-repeater
         run: |
-          sudo apt-get install -y gcc-aarch64-linux-gnu wget
+          sudo apt-get install -y wget qemu-user-static
           wget https://raw.githubusercontent.com/geekman/mdns-repeater/master/mdns-repeater.c
-          aarch64-linux-gnu-gcc -static -DHGVERSION='"1.0"' -o mdns-repeater mdns-repeater.c -Wl,--allow-multiple-definition
-          file mdns-repeater
-          strings mdns-repeater | grep -i 'dynamic\|interp\|glibc' || echo "no dynamic deps found"
+          docker run --rm --platform linux/arm64 -v "$PWD":/work -w /work alpine:latest \
+            sh -c "apk add gcc musl-dev && gcc -static -DHGVERSION='\"1.0\"' -o mdns-repeater mdns-repeater.c && file mdns-repeater"
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: mdns-repeater-aarch64-static
+          name: mdns-repeater-arm64-musl
           path: mdns-repeater
