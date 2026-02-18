@@ -1,0 +1,14 @@
+name: Build
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          sudo apt-get install -y gcc-aarch64-linux-gnu wget
+          wget https://raw.githubusercontent.com/geekman/mdns-repeater/master/mdns-repeater.c
+          aarch64-linux-gnu-gcc -static -o mdns-repeater mdns-repeater.c
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mdns-repeater
+          path: mdns-repeater
