@@ -9,7 +9,7 @@ jobs:
           sudo apt-get install -y wget qemu-user-static
           wget https://raw.githubusercontent.com/geekman/mdns-repeater/master/mdns-repeater.c
           docker run --rm --platform linux/arm64 -v "$PWD":/work -w /work alpine:latest \
-            sh -c "apk add gcc musl-dev && gcc -static -DHGVERSION='\"1.0\"' -o mdns-repeater mdns-repeater.c && file mdns-repeater"
+            sh -c "apk add gcc musl-dev && gcc -static -DHGVERSION='\"1.0\"' -o mdns-repeater mdns-repeater.c && echo 'compile OK'"
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
