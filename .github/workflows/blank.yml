@@ -4,13 +4,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build mdns-repeater
+      - name: Build mdns-repeater static musl
         run: |
-          sudo apt-get install -y gcc-aarch64-linux-gnu wget
+          sudo apt-get install -y musl-tools wget
           wget https://raw.githubusercontent.com/geekman/mdns-repeater/master/mdns-repeater.c
-          aarch64-linux-gnu-gcc -static -DHGVERSION='"1.0"' -o mdns-repeater mdns-repeater.c
+          wget https://musl.cc/aarch64-linux-musl-cross.tgz
+          tar -xzf aarch64-linux-musl-cross.tgz
+          ./aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc -static -DHGVERSION='"1.0"' -o mdns-repeater mdns-repeater.c
+          file mdns-repeater
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: mdns-repeater-aarch64
+          name: mdns-repeater-aarch64-musl
           path: mdns-repeater
